@@ -25,6 +25,25 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/restore', restoreRoutes);
 
+// Debug endpoint — check env vars and test Gemini
+app.get('/api/debug', async (req, res) => {
+  const keySet = !!process.env.GEMINI_API_KEY;
+  const keyPreview = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.slice(-6) : 'NOT SET';
+
+  let geminiStatus = 'untested';
+  try {
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent('Say OK');
+    geminiStatus = 'working: ' + result.response.text().trim();
+  } catch (e) {
+    geminiStatus = 'error: ' + e.message;
+  }
+
+  res.json({ keySet, keyPreview, geminiStatus });
+});
+
 // Session management
 app.post('/api/session/create', (req, res) => {
   const { v4: uuidv4 } = require('uuid');
