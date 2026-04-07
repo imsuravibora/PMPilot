@@ -1,0 +1,26 @@
+Task ID,Task Name,Department,Assigned To,Status,Priority,Start Date,Due Date,Progress %,Budget ($),Spent ($),Comments
+T001,Project Kickoff Meeting,Management,Sarah Johnson,Completed,High,2026-01-05,2026-01-06,100,500,450,All stakeholders aligned
+T002,Define Project Scope & Objectives,Management,Sarah Johnson,Completed,Critical,2026-01-06,2026-01-10,100,1000,980,Scope document signed off
+T003,Stakeholder Analysis,Management,Michael Lee,Completed,High,2026-01-10,2026-01-14,100,800,750,12 stakeholders identified
+T004,Risk Register Setup,Management,Sarah Johnson,Completed,High,2026-01-12,2026-01-16,100,600,600,Initial risks documented
+T005,Budget Planning & Approval,Finance,Emily Carter,Completed,Critical,2026-01-14,2026-01-20,100,1200,1150,Budget approved by CFO
+T006,Resource Allocation Plan,HR,James Patel,In Progress,High,2026-01-20,2026-02-01,75,900,700,Waiting on 2 contractor approvals
+T007,Design System Architecture,Engineering,David Kim,Completed,Critical,2026-01-22,2026-02-05,100,3000,2900,Architecture approved
+T008,Frontend UI Development,Engineering,Priya Sharma,In Progress,Critical,2026-02-01,2026-03-15,60,8000,5200,Login and dashboard done
+T009,Backend API Development,Engineering,David Kim,In Progress,Critical,2026-02-01,2026-03-20,50,10000,5100,Auth and user endpoints complete
+T010,Database Schema Design,Engineering,Alex Thompson,Completed,High,2026-02-05,2026-02-15,100,2000,1900,Schema finalized and reviewed
+T011,Third-Party Integrations,Engineering,Priya Sharma,Blocked,Critical,2026-02-10,2026-03-10,20,5000,1000,Blocked - waiting on vendor API credentials
+T012,QA Test Plan Creation,QA,Rachel Green,Completed,High,2026-02-12,2026-02-20,100,1500,1400,90 test cases documented
+T013,Unit Testing,QA,Rachel Green,In Progress,High,2026-02-20,2026-03-25,40,3000,1300,Backend tests 70% done, frontend pending
+T014,User Acceptance Testing,QA,Tom Wilson,Not Started,Critical,2026-03-25,2026-04-05,0,2500,0,Depends on T008 and T009 completion
+T015,Security Audit,Security,Nathan Brooks,Overdue,Critical,2026-03-01,2026-03-28,15,4000,700,Delayed due to team unavailability
+T016,Performance Testing,QA,Rachel Green,Not Started,High,2026-03-28,2026-04-08,0,2000,0,Not started yet
+T017,Documentation Writing,Marketing,Lisa Morgan,In Progress,Medium,2026-02-15,2026-04-01,35,2500,900,User guide 35% complete
+T018,Training Material Development,HR,James Patel,Not Started,Medium,2026-03-20,2026-04-10,0,1800,0,Waiting for final UI designs
+T019,Deployment Pipeline Setup,Engineering,Alex Thompson,In Progress,High,2026-03-01,2026-03-30,70,3500,2500,CI/CD pipeline 70% configured
+T020,Staging Environment Setup,Engineering,David Kim,Overdue,High,2026-03-05,2026-03-25,30,2000,700,Stuck - cloud provider access issues
+T021,Marketing Campaign Plan,Marketing,Lisa Morgan,In Progress,Medium,2026-02-20,2026-04-01,50,5000,2500,Social media plan ready
+T022,Product Launch Communication,Marketing,Lisa Morgan,Not Started,High,2026-04-01,2026-04-12,0,3000,0,Draft pending final launch date
+T023,Go-Live Preparation Checklist,Management,Sarah Johnson,In Progress,Critical,2026-03-20,2026-04-10,25,1000,250,Checklist 25% complete
+T024,Final Stakeholder Review,Management,Sarah Johnson,Not Started,Critical,2026-04-08,2026-04-12,0,500,0,Scheduled for April 8
+T025,Product Launch,Management,Sarah Johnson,Not Started,Critical,2026-04-15,2026-04-15,0,5000,0,TARGET LAUNCH DATE
