@@ -48,6 +48,10 @@
         <span class="nav-icon">≡</span>
         <span class="nav-label">Status Reports</span>
       </a>
+      <a class="nav-item" data-page="timeline" onclick="showPage('timeline')">
+        <span class="nav-icon">◷</span>
+        <span class="nav-label">Timeline Estimator</span>
+      </a>
       <a class="nav-item" data-page="documents" onclick="showPage('documents')">
         <span class="nav-icon">❑</span>
         <span class="nav-label">Document Hub</span>
@@ -332,6 +336,99 @@
       </div>
     </section>
 
+    <!-- ===== TIMELINE ESTIMATOR PAGE ===== -->
+    <section class="page" id="page-timeline">
+
+      <div class="timeline-intro card">
+        <div class="card-body">
+          <div class="timeline-intro-inner">
+            <div>
+              <h3>📁 What CSV should I upload?</h3>
+              <p>Upload a file with your team members, their weekly hours, tasks and estimated hours. PMPilot will calculate how long the project will take and give AI recommendations.</p>
+              <div class="upload-formats" style="margin-top:12px; justify-content:flex-start">
+                <span class="format-badge">CSV</span>
+                <span class="format-badge">XLSX</span>
+              </div>
+            </div>
+            <div class="timeline-columns-hint">
+              <p class="hint-title">Recommended columns:</p>
+              <ul>
+                <li>Member / Name</li>
+                <li>Role</li>
+                <li>Hours Per Week</li>
+                <li>Task</li>
+                <li>Estimated Hours</li>
+                <li>Availability %</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-zone timeline-upload-zone" id="timeline-upload-zone"
+        ondrop="handleTimelineDrop(event)"
+        ondragover="handleDragOver(event)"
+        ondragleave="handleDragLeave(event)">
+        <div class="upload-icon small">◷</div>
+        <h3>Upload Team Hours CSV</h3>
+        <p>Drop your file here or click to browse</p>
+        <input type="file" id="timeline-input" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleTimelineSelect(event)" />
+        <button class="btn-primary" onclick="document.getElementById('timeline-input').click()">Browse File</button>
+      </div>
+
+      <div id="timeline-loading" style="display:none" class="card">
+        <div class="card-body" style="text-align:center; padding:40px">
+          <div class="spinner"></div>
+          <p style="margin-top:16px; color:var(--text-light); font-weight:500">Analysing team capacity and estimating timeline...</p>
+        </div>
+      </div>
+
+      <div id="timeline-results" style="display:none">
+
+        <!-- Key Metrics -->
+        <div class="stats-grid" id="timeline-stats"></div>
+
+        <!-- Charts Row -->
+        <div class="dashboard-grid" style="margin-bottom:20px">
+          <div class="chart-card">
+            <h3>Hours Per Team Member</h3>
+            <div class="chart-subtitle">Estimated work assigned vs weekly capacity</div>
+            <div class="chart-wrapper">
+              <canvas id="timeline-member-chart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Team Utilization %</h3>
+            <div class="chart-subtitle">How loaded is each team member</div>
+            <div class="chart-wrapper">
+              <canvas id="timeline-util-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gantt Style Timeline -->
+        <div class="chart-card full-width" style="margin-bottom:20px">
+          <h3>Project Timeline (Gantt View)</h3>
+          <div class="chart-subtitle">Estimated weeks per team member based on workload</div>
+          <div class="chart-wrapper tall">
+            <canvas id="timeline-gantt-chart"></canvas>
+          </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="card">
+          <div class="card-header">
+            <h3>AI Timeline Analysis</h3>
+            <span class="powered-by">Powered by Gemini 2.5</span>
+          </div>
+          <div class="card-body">
+            <div class="ai-response" id="timeline-ai-text"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- ===== DOCUMENTS PAGE ===== -->
     <section class="page" id="page-documents">
       <div class="doc-upload-zone" id="doc-upload-zone" ondrop="handleDocDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
@@ -374,5 +471,6 @@
   <script src="js/documents.js"></script>
   <script src="js/reports.js"></script>
   <script src="js/charts.js"></script>
+  <script src="js/timeline.js"></script>
 </body>
 </html>

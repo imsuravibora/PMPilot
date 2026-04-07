@@ -1,0 +1,21 @@
+Member,Role,Department,Hours Per Week,Task,Estimated Hours,Skill Level,Availability %
+Sarah Johnson,Project Manager,Management,40,Project Coordination & Reporting,80,Senior,100
+Sarah Johnson,Project Manager,Management,40,Stakeholder Management,40,Senior,100
+David Kim,Lead Engineer,Engineering,40,System Architecture Design,60,Senior,100
+David Kim,Lead Engineer,Engineering,40,Backend API Development,120,Senior,100
+David Kim,Lead Engineer,Engineering,40,Database Schema Design,40,Senior,100
+Priya Sharma,Frontend Developer,Engineering,40,Frontend UI Development,160,Mid,100
+Priya Sharma,Frontend Developer,Engineering,40,Third-Party Integrations,80,Mid,100
+Alex Thompson,Backend Developer,Engineering,40,Backend API Development,120,Mid,100
+Alex Thompson,Backend Developer,Engineering,40,CI/CD Pipeline Setup,60,Mid,100
+Rachel Green,QA Engineer,QA,40,Unit Testing,80,Mid,100
+Rachel Green,QA Engineer,QA,40,User Acceptance Testing,60,Mid,100
+Rachel Green,QA Engineer,QA,40,Performance Testing,40,Mid,100
+Nathan Brooks,Security Specialist,Security,20,Security Audit,60,Senior,50
+Lisa Morgan,Marketing Manager,Marketing,30,Marketing Campaign Plan,80,Mid,75
+Lisa Morgan,Marketing Manager,Marketing,30,Product Launch Communication,40,Mid,75
+James Patel,HR Manager,HR,20,Resource Allocation Plan,30,Mid,50
+James Patel,HR Manager,HR,20,Training Material Development,40,Mid,50
+Emily Carter,Finance Manager,Finance,20,Budget Planning & Approval,30,Senior,50
+Michael Lee,Business Analyst,Management,30,Stakeholder Analysis,40,Mid,75
+Michael Lee,Business Analyst,Management,30,Documentation Writing,60,Mid,75

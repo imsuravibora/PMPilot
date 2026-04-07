@@ -1081,6 +1081,55 @@ body {
 .toast.warning { background: var(--warning); color: var(--text); }
 
 /* =============================================
+   TIMELINE ESTIMATOR
+   ============================================= */
+.timeline-intro { margin-bottom: 20px; }
+
+.timeline-intro-inner {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.timeline-intro-inner h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.timeline-intro-inner p  { color: var(--text-light); font-size: 13px; line-height: 1.6; }
+
+.timeline-columns-hint {
+  flex-shrink: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  min-width: 200px;
+}
+
+.hint-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+
+.timeline-columns-hint ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timeline-columns-hint ul li {
+  font-size: 12px;
+  color: var(--text-light);
+  padding-left: 14px;
+  position: relative;
+}
+
+.timeline-columns-hint ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-size: 11px;
+}
+
+.timeline-upload-zone { margin-bottom: 24px; padding: 36px; }
+
+/* =============================================
    CHARTS
    ============================================= */
 .charts-grid {

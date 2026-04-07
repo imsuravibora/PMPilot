@@ -7,6 +7,7 @@ const uploadRoutes = require('./routes/upload');
 const chatRoutes = require('./routes/chat');
 const documentsRoutes = require('./routes/documents');
 const restoreRoutes = require('./routes/restore');
+const timelineRoutes = require('./routes/timeline');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/restore', restoreRoutes);
+app.use('/api/timeline', timelineRoutes);
 
 // Debug endpoint — check env vars and test Gemini
 app.get('/api/debug', async (req, res) => {

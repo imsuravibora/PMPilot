@@ -12,6 +12,7 @@ const PAGE_META = {
   chat:       { title: 'AI Chat',          subtitle: 'Ask questions about your project in plain English' },
   charts:     { title: 'Charts',           subtitle: 'Visual breakdown of your project data' },
   reports:    { title: 'Status Reports',   subtitle: 'Auto-generated reports ready to share' },
+  timeline:   { title: 'Timeline Estimator', subtitle: 'Upload team hours CSV to estimate project duration' },
   documents:  { title: 'Document Hub',     subtitle: 'Upload and manage your project documentation' }
 };
 
