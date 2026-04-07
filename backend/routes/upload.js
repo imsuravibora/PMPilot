@@ -74,7 +74,7 @@ router.post('/', upload.single('file'), async (req, res) => {
       stats,
       risks,
       insights: session.insights,
-      preview: data.slice(0, 5)
+      preview: data.slice(0, 500) // send up to 500 rows for charts
     });
 
   } catch (err) {

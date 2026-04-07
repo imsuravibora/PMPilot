@@ -6,6 +6,7 @@ const path = require('path');
 const uploadRoutes = require('./routes/upload');
 const chatRoutes = require('./routes/chat');
 const documentsRoutes = require('./routes/documents');
+const restoreRoutes = require('./routes/restore');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/upload', uploadRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/documents', documentsRoutes);
+app.use('/api/restore', restoreRoutes);
 
 // Session management
 app.post('/api/session/create', (req, res) => {

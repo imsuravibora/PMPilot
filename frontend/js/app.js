@@ -10,6 +10,7 @@ const PAGE_META = {
   upload:     { title: 'Upload Data',      subtitle: 'Upload a CSV or Excel file to start analysing' },
   insights:   { title: 'Insights',         subtitle: 'AI-powered analysis of your project data' },
   chat:       { title: 'AI Chat',          subtitle: 'Ask questions about your project in plain English' },
+  charts:     { title: 'Charts',           subtitle: 'Visual breakdown of your project data' },
   reports:    { title: 'Status Reports',   subtitle: 'Auto-generated reports ready to share' },
   documents:  { title: 'Document Hub',     subtitle: 'Upload and manage your project documentation' }
 };
@@ -17,6 +18,7 @@ const PAGE_META = {
 // --- Init ---
 window.addEventListener('DOMContentLoaded', async () => {
   await initSession();
+  await restoreFromLocalStorage();
   showPage('dashboard');
 });
 
@@ -75,12 +77,47 @@ function updateSessionUI(data) {
   document.getElementById('stat-docs').textContent = data.documentCount || '0';
 }
 
+async function restoreFromLocalStorage() {
+  const stored = localStorage.getItem('pmpilot_data');
+  const storedRows = localStorage.getItem('pmpilot_rows');
+  if (!stored) return;
+
+  try {
+    const data = JSON.parse(stored);
+    const rows = storedRows ? JSON.parse(storedRows) : data.rows || [];
+
+    // Restore window.__uploadData so all pages work
+    window.__uploadData = { ...data, preview: rows };
+
+    // Restore server session silently
+    await fetch(`${API}/restore`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: SESSION_ID,
+        fileName: data.fileName,
+        headers: data.headers,
+        rows: rows,
+        stats: data.stats
+      })
+    });
+
+    // Update UI
+    updateDashboardAfterUpload({ ...data, preview: rows });
+
+  } catch (e) {
+    console.warn('Could not restore session:', e);
+  }
+}
+
 async function clearSession() {
   if (!confirm('Clear session? All uploaded data will be lost.')) return;
   try {
     await fetch(`${API}/session/${SESSION_ID}`, { method: 'DELETE' });
   } catch (e) {}
   localStorage.removeItem('pmpilot_session');
+  localStorage.removeItem('pmpilot_data');
+  localStorage.removeItem('pmpilot_rows');
   location.reload();
 }
 
@@ -108,6 +145,7 @@ function showPage(pageId) {
 
   // Page-specific init
   if (pageId === 'insights') renderInsightsPage();
+  if (pageId === 'charts') renderChartsPage();
   if (pageId === 'reports') initReportsPage();
   if (pageId === 'documents') loadDocuments();
 }

@@ -52,8 +52,20 @@ async function uploadFile(file) {
       return;
     }
 
-    // Store for dashboard use
+    // Store for dashboard use — persist in localStorage for session recovery
     window.__uploadData = data;
+    localStorage.setItem('pmpilot_data', JSON.stringify({
+      fileName: data.fileName,
+      headers: data.headers,
+      rows: data.preview, // store preview rows for charts
+      totalRows: data.totalRows,
+      totalColumns: data.totalColumns,
+      risks: data.risks,
+      insights: data.insights,
+      stats: data.stats
+    }));
+    // Also store full data for charts (up to 500 rows)
+    localStorage.setItem('pmpilot_rows', JSON.stringify(data.preview || []));
 
     showUploadResult(data);
     updateDashboardAfterUpload(data);

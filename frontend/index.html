@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -38,6 +39,10 @@
         <span class="nav-icon">◈</span>
         <span class="nav-label">AI Chat</span>
         <span class="nav-badge" id="chat-badge" style="display:none">New</span>
+      </a>
+      <a class="nav-item" data-page="charts" onclick="showPage('charts')">
+        <span class="nav-icon">▦</span>
+        <span class="nav-label">Charts</span>
       </a>
       <a class="nav-item" data-page="reports" onclick="showPage('reports')">
         <span class="nav-icon">≡</span>
@@ -274,6 +279,24 @@
       </div>
     </section>
 
+    <!-- ===== CHARTS PAGE ===== -->
+    <section class="page" id="page-charts">
+      <div class="card" id="charts-empty">
+        <div class="empty-state">
+          <div class="empty-icon">▦</div>
+          <h3>No Data Loaded</h3>
+          <p>Upload a project CSV or Excel file to auto-generate charts</p>
+          <button class="btn-primary" onclick="showPage('upload')">Upload Now</button>
+        </div>
+      </div>
+
+      <div id="charts-content" style="display:none">
+        <div class="charts-grid" id="charts-grid">
+          <!-- Charts injected by JS -->
+        </div>
+      </div>
+    </section>
+
     <!-- ===== STATUS REPORTS PAGE ===== -->
     <section class="page" id="page-reports">
       <div class="card" id="reports-empty">
@@ -350,5 +373,6 @@
   <script src="js/dashboard.js"></script>
   <script src="js/documents.js"></script>
   <script src="js/reports.js"></script>
+  <script src="js/charts.js"></script>
 </body>
 </html>

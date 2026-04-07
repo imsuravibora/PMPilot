@@ -15,7 +15,6 @@ function initReportsPage() {
   emptyEl.style.display = 'none';
   contentEl.style.display = 'block';
 
-  // Auto-generate if not yet done
   if (!document.getElementById('report-text').textContent.trim()) {
     generateReport();
   }
@@ -29,7 +28,10 @@ async function generateReport() {
   loading.style.display = 'block';
 
   try {
-    const res = await fetch(`${API}/chat/report`, {
+    // First ensure session has data restored
+    await ensureSessionRestored();
+
+    const res = await fetch(`${API}/restore/report`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId: SESSION_ID })
@@ -40,7 +42,7 @@ async function generateReport() {
     reportText.style.display = 'block';
 
     if (!res.ok) {
-      reportText.textContent = '⚠️ ' + (data.error || 'Failed to generate report');
+      reportText.textContent = '⚠️ ' + (data.error || 'Failed to generate report. Please re-upload your data.');
       return;
     }
 
@@ -50,8 +52,29 @@ async function generateReport() {
   } catch (err) {
     loading.style.display = 'none';
     reportText.style.display = 'block';
-    reportText.textContent = '⚠️ Could not generate report. Please check your API key and try again.';
+    reportText.textContent = '⚠️ Could not generate report. Please check your internet connection and try again.';
   }
+}
+
+async function ensureSessionRestored() {
+  const stored = localStorage.getItem('pmpilot_data');
+  const storedRows = localStorage.getItem('pmpilot_rows');
+  if (!stored) return;
+
+  const data = JSON.parse(stored);
+  const rows = storedRows ? JSON.parse(storedRows) : [];
+
+  await fetch(`${API}/restore`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sessionId: SESSION_ID,
+      fileName: data.fileName,
+      headers: data.headers,
+      rows: rows,
+      stats: data.stats
+    })
+  });
 }
 
 function copyReport() {
