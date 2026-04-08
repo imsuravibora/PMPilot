@@ -20,7 +20,7 @@ Flag risks using clear indicators: 🔴 HIGH RISK, 🟡 MEDIUM RISK, 🟢 LOW RI
 Always end with at least one actionable recommendation.`;
 
 async function generateInsights(dataText, headers) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
   const prompt = `${PM_SYSTEM_PROMPT}
 
@@ -45,7 +45,7 @@ Keep it practical and concise.`;
 }
 
 async function chatWithData(message, dataText, headers, chatHistory) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
   const historyContext = chatHistory.length > 0
     ? '\n\nPREVIOUS CONVERSATION:\n' + chatHistory.slice(-6).map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')
@@ -68,7 +68,7 @@ Provide a helpful, specific answer based on the data provided. Be concise and ac
 }
 
 async function generateStatusReport(dataText, headers) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -112,7 +112,7 @@ Make it professional, ready to send to a stakeholder or team.`;
 }
 
 async function summarizeDocument(documentText, filename) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
   const prompt = `${PM_SYSTEM_PROMPT}
 
