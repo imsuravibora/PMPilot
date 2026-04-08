@@ -62,7 +62,7 @@ function calcTimeline(teamData) {
 
 async function getAITimelineInsights(teamData, timeline) {
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const teamSummary = timeline.memberList.map(m =>
     `${m.name} (${m.role}): ${m.hoursPerWeek} hrs/week available, ${m.totalEstimatedHours} hrs of work assigned`

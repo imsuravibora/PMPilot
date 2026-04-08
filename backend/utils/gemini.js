@@ -2,6 +2,22 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Retry wrapper — handles temporary 503 overloads
+async function withRetry(fn, retries = 3, delay = 3000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const isOverload = err.message && (err.message.includes('503') || err.message.includes('high demand') || err.message.includes('overloaded'));
+      if (isOverload && i < retries - 1) {
+        await new Promise(res => setTimeout(res, delay));
+      } else {
+        throw err;
+      }
+    }
+  }
+}
+
 const PM_SYSTEM_PROMPT = `You are PMPilot, an expert AI assistant for project managers and project coordinators.
 You analyze project data and documentation to provide clear, actionable insights.
 
@@ -20,7 +36,7 @@ Flag risks using clear indicators: 🔴 HIGH RISK, 🟡 MEDIUM RISK, 🟢 LOW RI
 Always end with at least one actionable recommendation.`;
 
 async function generateInsights(dataText, headers) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const prompt = `${PM_SYSTEM_PROMPT}
 
@@ -40,12 +56,12 @@ Please provide:
 
 Keep it practical and concise.`;
 
-  const result = await model.generateContent(prompt);
+  const result = await withRetry(() => model.generateContent(prompt));
   return result.response.text();
 }
 
 async function chatWithData(message, dataText, headers, chatHistory) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const historyContext = chatHistory.length > 0
     ? '\n\nPREVIOUS CONVERSATION:\n' + chatHistory.slice(-6).map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')
@@ -63,12 +79,12 @@ PROJECT MANAGER'S QUESTION: ${message}
 
 Provide a helpful, specific answer based on the data provided. Be concise and actionable.`;
 
-  const result = await model.generateContent(prompt);
+  const result = await withRetry(() => model.generateContent(prompt));
   return result.response.text();
 }
 
 async function generateStatusReport(dataText, headers) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -107,12 +123,12 @@ NEXT STEPS:
 
 Make it professional, ready to send to a stakeholder or team.`;
 
-  const result = await model.generateContent(prompt);
+  const result = await withRetry(() => model.generateContent(prompt));
   return result.response.text();
 }
 
 async function summarizeDocument(documentText, filename) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const prompt = `${PM_SYSTEM_PROMPT}
 
@@ -129,7 +145,7 @@ Provide:
 
 Keep the summary concise and useful for a project manager.`;
 
-  const result = await model.generateContent(prompt);
+  const result = await withRetry(() => model.generateContent(prompt));
   return result.response.text();
 }
 
