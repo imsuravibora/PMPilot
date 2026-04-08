@@ -1,22 +1,7 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const Groq = require('groq-sdk');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-// Retry wrapper — handles temporary 503 overloads
-async function withRetry(fn, retries = 3, delay = 3000) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await fn();
-    } catch (err) {
-      const isOverload = err.message && (err.message.includes('503') || err.message.includes('high demand') || err.message.includes('overloaded'));
-      if (isOverload && i < retries - 1) {
-        await new Promise(res => setTimeout(res, delay));
-      } else {
-        throw err;
-      }
-    }
-  }
-}
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const MODEL = 'llama-3.3-70b-versatile';
 
 const PM_SYSTEM_PROMPT = `You are PMPilot, an expert AI assistant for project managers and project coordinators.
 You analyze project data and documentation to provide clear, actionable insights.
@@ -36,11 +21,11 @@ Flag risks using clear indicators: 🔴 HIGH RISK, 🟡 MEDIUM RISK, 🟢 LOW RI
 Always end with at least one actionable recommendation.`;
 
 async function generateInsights(dataText, headers) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-  const prompt = `${PM_SYSTEM_PROMPT}
-
-Analyze the following project data and provide a structured PM insights report.
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: 'system', content: PM_SYSTEM_PROMPT },
+      { role: 'user', content: `Analyze the following project data and provide a structured PM insights report.
 
 COLUMNS: ${headers.join(', ')}
 
@@ -54,43 +39,39 @@ Please provide:
 4. **Top 3 Recommendations** (actionable next steps)
 5. **Items Needing Immediate Attention**
 
-Keep it practical and concise.`;
-
-  const result = await withRetry(() => model.generateContent(prompt));
-  return result.response.text();
+Keep it practical and concise.` }
+    ],
+    max_tokens: 1024
+  });
+  return response.choices[0].message.content;
 }
 
 async function chatWithData(message, dataText, headers, chatHistory) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const historyMessages = chatHistory.slice(-6).map(m => ({
+    role: m.role === 'assistant' ? 'assistant' : 'user',
+    content: m.content
+  }));
 
-  const historyContext = chatHistory.length > 0
-    ? '\n\nPREVIOUS CONVERSATION:\n' + chatHistory.slice(-6).map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n')
-    : '';
-
-  const prompt = `${PM_SYSTEM_PROMPT}
-
-The project manager has uploaded the following project data:
-COLUMNS: ${headers.join(', ')}
-DATA:
-${dataText}
-${historyContext}
-
-PROJECT MANAGER'S QUESTION: ${message}
-
-Provide a helpful, specific answer based on the data provided. Be concise and actionable.`;
-
-  const result = await withRetry(() => model.generateContent(prompt));
-  return result.response.text();
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: 'system', content: PM_SYSTEM_PROMPT + `\n\nThe project manager has uploaded the following project data:\nCOLUMNS: ${headers.join(', ')}\nDATA:\n${dataText}` },
+      ...historyMessages,
+      { role: 'user', content: message }
+    ],
+    max_tokens: 1024
+  });
+  return response.choices[0].message.content;
 }
 
 async function generateStatusReport(dataText, headers) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const prompt = `${PM_SYSTEM_PROMPT}
-
-Generate a professional project status report based on this data.
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: 'system', content: PM_SYSTEM_PROMPT },
+      { role: 'user', content: `Generate a professional project status report based on this data.
 
 COLUMNS: ${headers.join(', ')}
 DATA:
@@ -121,18 +102,19 @@ RESOURCE STATUS:
 NEXT STEPS:
 - [bullet points]
 
-Make it professional, ready to send to a stakeholder or team.`;
-
-  const result = await withRetry(() => model.generateContent(prompt));
-  return result.response.text();
+Make it professional, ready to send to a stakeholder or team.` }
+    ],
+    max_tokens: 1500
+  });
+  return response.choices[0].message.content;
 }
 
 async function summarizeDocument(documentText, filename) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-  const prompt = `${PM_SYSTEM_PROMPT}
-
-Summarize the following project document: "${filename}"
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: 'system', content: PM_SYSTEM_PROMPT },
+      { role: 'user', content: `Summarize the following project document: "${filename}"
 
 DOCUMENT CONTENT:
 ${documentText.substring(0, 8000)}
@@ -143,10 +125,11 @@ Provide:
 3. **Action Items** (if any)
 4. **Important Dates/Deadlines** (if mentioned)
 
-Keep the summary concise and useful for a project manager.`;
-
-  const result = await withRetry(() => model.generateContent(prompt));
-  return result.response.text();
+Keep the summary concise and useful for a project manager.` }
+    ],
+    max_tokens: 800
+  });
+  return response.choices[0].message.content;
 }
 
 module.exports = { generateInsights, chatWithData, generateStatusReport, summarizeDocument };

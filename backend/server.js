@@ -29,21 +29,24 @@ app.use('/api/timeline', timelineRoutes);
 
 // Debug endpoint — check env vars and test Gemini
 app.get('/api/debug', async (req, res) => {
-  const keySet = !!process.env.GEMINI_API_KEY;
-  const keyPreview = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.slice(-6) : 'NOT SET';
+  const keySet = !!process.env.GROQ_API_KEY;
+  const keyPreview = process.env.GROQ_API_KEY ? process.env.GROQ_API_KEY.slice(-6) : 'NOT SET';
 
-  let geminiStatus = 'untested';
+  let groqStatus = 'untested';
   try {
-    const { GoogleGenerativeAI } = require('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const result = await model.generateContent('Say OK');
-    geminiStatus = 'working: ' + result.response.text().trim();
+    const Groq = require('groq-sdk');
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const response = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: 'Say OK' }],
+      max_tokens: 5
+    });
+    groqStatus = 'working: ' + response.choices[0].message.content.trim();
   } catch (e) {
-    geminiStatus = 'error: ' + e.message;
+    groqStatus = 'error: ' + e.message;
   }
 
-  res.json({ keySet, keyPreview, geminiStatus });
+  res.json({ keySet, keyPreview, groqStatus });
 });
 
 // Session management

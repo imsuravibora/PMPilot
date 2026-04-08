@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const { parseCSV, parseExcel } = require('../utils/dataProcessor');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const Groq = require('groq-sdk');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
@@ -61,16 +61,17 @@ function calcTimeline(teamData) {
 }
 
 async function getAITimelineInsights(teamData, timeline) {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
   const teamSummary = timeline.memberList.map(m =>
     `${m.name} (${m.role}): ${m.hoursPerWeek} hrs/week available, ${m.totalEstimatedHours} hrs of work assigned`
   ).join('\n');
 
-  const prompt = `You are PMPilot, an expert AI project manager assistant.
-
-Analyze this team capacity and project timeline data:
+  const response = await groq.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    messages: [
+      { role: 'system', content: 'You are PMPilot, an expert AI project manager assistant.' },
+      { role: 'user', content: `Analyze this team capacity and project timeline data:
 
 TEAM CAPACITY:
 ${teamSummary}
@@ -80,18 +81,18 @@ CALCULATED TIMELINE:
 - Total estimated work: ${timeline.totalEstimatedHours} hours
 - Estimated duration: ${timeline.weeksNeeded} weeks (${timeline.monthsNeeded} months / ${timeline.quartersNeeded} quarters)
 
-Provide a structured timeline analysis with:
-
-1. **TIMELINE SUMMARY** — Plain English summary of how long the project will take
+Provide:
+1. **TIMELINE SUMMARY** — Plain English summary
 2. **TEAM CAPACITY ANALYSIS** — Who has too much work, who has capacity
 3. **TOP 3 BOTTLENECKS** — Biggest risks to the timeline
-4. **RECOMMENDATIONS** — How to finish faster or more efficiently
+4. **RECOMMENDATIONS** — How to finish faster
 5. **QUARTER BREAKDOWN** — What should be done in Q1, Q2, etc.
 
-Be specific, practical and actionable. Use 🔴 🟡 🟢 for risk levels.`;
-
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+Use 🔴 🟡 🟢 for risk levels.` }
+    ],
+    max_tokens: 1024
+  });
+  return response.choices[0].message.content;
 }
 
 router.post('/analyse', upload.single('file'), async (req, res) => {
